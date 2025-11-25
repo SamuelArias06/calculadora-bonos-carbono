@@ -2,93 +2,654 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Calculadora de Bonos de Carbono</title>
+  <title>Calculadora de Bonos de Carbono – Proyecto de Ingeniería Económica</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+    :root {
+      --verde-oscuro: #124734;
+      --verde: #1f7a4d;
+      --verde-claro: #e5f4ec;
+      --crema: #f9f6f0;
+      --gris-texto: #444444;
+      --gris-claro: #dddddd;
+      --rojo: #b00020;
     }
-    label { display: block; margin-top: 10px; }
-    input, select {
-      width: 100%;
-      padding: 6px;
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--gris-texto);
+      background: linear-gradient(180deg, #f3f7f5 0%, #ffffff 40%, #f3f7f5 100%);
+    }
+
+    header {
+      background: radial-gradient(circle at top left, #2e8b57, #124734);
+      color: white;
+      padding: 24px 16px 32px;
+    }
+
+    .contenedor {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px 40px;
+    }
+
+    .header-top {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .logo-circulo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      background: rgba(0,0,0,0.12);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.18);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9be7c4;
+    }
+
+    h1 {
+      margin: 8px 0 4px;
+      font-size: clamp(24px, 4vw, 32px);
+    }
+
+    .subtitulo {
+      margin: 0;
+      max-width: 640px;
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+
+    .header-grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(0,0,0,0.12);
+    }
+
+    .resumen-card {
+      background: rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .resumen-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .resumen-label {
+      opacity: 0.85;
+    }
+
+    .resumen-valor {
+      font-weight: 600;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.4);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    main {
+      margin-top: -24px;
+    }
+
+    .layout-principal {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 840px) {
+      .header-grid,
+      .layout-principal {
+        grid-template-columns: 1fr;
+      }
+      main {
+        margin-top: -8px;
+      }
+    }
+
+    section {
+      margin-top: 28px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      color: var(--verde-oscuro);
+    }
+
+    h3 {
+      font-size: 15px;
+      margin: 16px 0 6px;
+      color: var(--verde);
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.55;
+      margin: 4px 0 8px;
+    }
+
+    .tarjeta {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--gris-claro);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      padding: 18px 18px 20px;
+    }
+
+    .tarjeta-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .tarjeta-titulo {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--verde-oscuro);
+    }
+
+    .tarjeta-etiqueta {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--verde-claro);
+      background: var(--verde-claro);
+      color: var(--verde-oscuro);
+    }
+
+    .calculadora-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       margin-top: 4px;
     }
-    button {
-      margin-top: 16px;
-      padding: 10px;
-      width: 100%;
-      cursor: pointer;
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
     }
+
+    .descripcion-label {
+      font-size: 12px;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #c8d2cb;
+      font-size: 13px;
+      outline: none;
+      background: #fbfdfb;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--verde);
+      box-shadow: 0 0 0 2px rgba(31,122,77,0.18);
+      background: #ffffff;
+    }
+
+    .fila-dos-columnas {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .fila-dos-columnas {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    button {
+      margin-top: 6px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--verde), #27a063);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    button:hover {
+      filter: brightness(1.03);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
     .resultado {
-      margin-top: 20px;
-      font-weight: bold;
+      margin-top: 18px;
+      border-radius: 12px;
+      background: var(--crema);
+      border: 1px solid #eadfca;
+      padding: 12px 12px 10px;
+      font-size: 13px;
+    }
+
+    .resultado-titulo {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--verde-oscuro);
+    }
+
+    .resultado-monto {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 4px 0 6px;
+    }
+
+    .resultado-detalle {
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .error {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--rojo);
+    }
+
+    .lista-opciones {
+      margin: 6px 0 10px;
+      padding-left: 18px;
+      font-size: 13px;
+    }
+
+    .lista-opciones li {
+      margin-bottom: 4px;
+    }
+
+    .etiqueta-opcion {
+      font-weight: 600;
+      color: var(--verde-oscuro);
+    }
+
+    footer {
+      border-top: 1px solid #e0e4df;
+      padding-top: 12px;
+      margin-top: 26px;
+      font-size: 11px;
+      color: #888;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .footer-enfasis {
+      font-weight: 600;
+      color: var(--verde);
     }
   </style>
 </head>
 <body>
-  <h1>Calculadora de inversión en bonos de carbono</h1>
+  <header>
+    <div class="contenedor">
+      <div class="header-top">
+        <div class="logo-circulo">
+          CO₂
+        </div>
+        <div>
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span>Proyecto de Aula · Ingeniería Económica</span>
+          </div>
+          <h1>Calculadora de inversión en bonos de carbono</h1>
+          <p class="subtitulo">
+            Herramienta académica para estimar la inversión inicial necesaria para que una empresa
+            compense sus emisiones anuales de CO₂ mediante la compra de bonos de carbono vinculados
+            a actividades de protección, cuidado y restauración de coberturas vegetales en Colombia.
+          </p>
 
-  <label>
-    Emisiones anuales (toneladas de CO₂)
-    <input type="number" id="emisiones" step="0.01" />
-  </label>
+          <div class="chip-list">
+            <span class="chip">Compensación de emisiones</span>
+            <span class="chip">Parques y zonas de amortiguación</span>
+            <span class="chip">Chiribiquete y Amazonía</span>
+            <span class="chip">Análisis económico-ambiental</span>
+          </div>
+        </div>
+      </div>
 
-  <label>
-    Tasa de cambio COP / USD
-    <input type="number" id="tasa" step="0.01" />
-  </label>
+      <div class="header-grid">
+        <div>
+          <h3 style="color:#ddf6e7; margin-top:18px;">¿Qué hace esta herramienta?</h3>
+          <p class="subtitulo">
+            A partir de las emisiones de la empresa, el precio base del bono (5 USD/tCO₂) y el tipo de
+            proyecto ambiental seleccionado, la calculadora estima el valor de la inversión en pesos
+            colombianos (COP) para compensar un año de emisiones.
+          </p>
+        </div>
+        <div class="resumen-card">
+          <div class="resumen-item">
+            <span class="resumen-label">Enfoque</span>
+            <span class="resumen-valor">Ingeniería Económica &amp; Ambiental</span>
+          </div>
+          <div class="resumen-item">
+            <span class="resumen-label">Precio base de referencia</span>
+            <span class="resumen-valor">5 USD / tCO₂</span>
+          </div>
+          <div class="resumen-item">
+            <span class="resumen-label">Tipo de proyectos</span>
+            <span class="resumen-valor">Protección, mantenimiento y restauración</span>
+          </div>
+          <div class="resumen-item">
+            <span class="resumen-label">Áreas potenciales</span>
+            <span class="resumen-valor">Zonas de amortiguación · Chiribiquete</span>
+          </div>
+          <span class="pill">Uso académico – No es una cotización comercial real</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
-  <label>
-    Precio base del bono (USD por tonelada de CO₂)
-    <input type="number" id="precio" step="0.01" value="5" />
-  </label>
+  <main class="contenedor">
+    <div class="layout-principal">
+      <!-- COLUMNA IZQUIERDA: CONTEXTO -->
+      <div>
+        <section>
+          <h2>Contexto: bonos de carbono y realidad ambiental en Colombia</h2>
+          <p>
+            Los bonos de carbono representan la reducción o captura de una tonelada de CO₂ equivalente
+            (tCO₂e). En Colombia, su uso se ha impulsado por los compromisos climáticos internacionales,
+            el impuesto al carbono y la necesidad de financiar la protección de ecosistemas estratégicos
+            como la Amazonía y los parques nacionales naturales.
+          </p>
+          <p>
+            Zonas como la Serranía de Chiribiquete y sus áreas de amortiguación son clave para almacenar
+            carbono, conservar biodiversidad y reducir la deforestación. A través de esquemas de
+            compensación, las empresas pueden financiar:
+          </p>
+          <ul class="lista-opciones">
+            <li><span class="etiqueta-opcion">Protección:</span> presencia de guardabosques y control de actividades ilegales.</li>
+            <li><span class="etiqueta-opcion">Mantenimiento:</span> cuidado de coberturas vegetales, abonos y manejo de suelos.</li>
+            <li><span class="etiqueta-opcion">Restauración activa:</span> siembra de árboles nativos y recuperación de áreas degradadas.</li>
+          </ul>
+          <p>
+            Desde la perspectiva de Ingeniería Económica, esta herramienta facilita la
+            <strong>estimación de la inversión inicial</strong> necesaria para compensar emisiones, apoyada
+            en principios de análisis de costos, evaluación de alternativas y costo de actividades
+            ambientales.
+          </p>
+        </section>
 
-  <label>
-    Tipo de bono
-    <select id="opcion">
-      <option value="1">Opción 1 – Guardabosques</option>
-      <option value="2">Opción 2 – Guardabosques + cuidado de cobertura</option>
-      <option value="3">Opción 3 – Guardabosques + cuidado + siembra</option>
-    </select>
-  </label>
+        <section>
+          <h2>Opciones de bonos modeladas en la calculadora</h2>
+          <p>La calculadora ofrece tres niveles de intensidad de intervención ambiental:</p>
 
-  <button onclick="calcular()">Calcular inversión</button>
+          <h3>Opción 1 – Bono simple: protección básica</h3>
+          <p>
+            Incluye acciones de vigilancia y presencia de guardabosques en zonas protegidas. Es la opción
+            de menor costo relativo, representada en el modelo con un multiplicador de <strong>1,0</strong>
+            sobre el precio base.
+          </p>
 
-  <div class="resultado" id="resultado"></div>
+          <h3>Opción 2 – Protección + cuidado de coberturas vegetales</h3>
+          <p>
+            Además de guardabosques, incorpora jornadas de cuidado de la cobertura vegetal, uso de abonos
+            y fertilización ecológica. Se modela con un multiplicador de <strong>1,2</strong>, reflejando
+            mayores costos asociados a las actividades adicionales.
+          </p>
+
+          <h3>Opción 3 – Protección + cuidado + siembra de árboles nativos</h3>
+          <p>
+            Incluye protección, mantenimiento y jornadas de siembra y restauración con especies nativas en
+            zonas de recuperación o amortiguación. Se modela con un multiplicador de
+            <strong>1,5</strong>, por ser la opción de mayor intensidad y costo, pero también con
+            mayor impacto ambiental.
+          </p>
+        </section>
+      </div>
+
+      <!-- COLUMNA DERECHA: CALCULADORA -->
+      <div>
+        <section class="tarjeta">
+          <div class="tarjeta-header">
+            <div class="tarjeta-titulo">Calculadora de inversión inicial</div>
+            <div class="tarjeta-etiqueta">Simulación académica</div>
+          </div>
+          <p style="font-size:13px; margin-bottom:10px;">
+            Ingresa los datos de tu empresa para estimar cuánto debería invertir en bonos de carbono
+            para compensar sus emisiones anuales de CO₂.
+          </p>
+
+          <div class="calculadora-grid">
+            <div>
+              <label for="emisiones">
+                Emisiones anuales (toneladas de CO₂)
+              </label>
+              <input type="number" id="emisiones" step="0.01" min="0" placeholder="Ejemplo: 1 250" />
+              <div class="descripcion-label">
+                Corresponde a la huella anual que la empresa desea compensar.
+              </div>
+            </div>
+
+            <div class="fila-dos-columnas">
+              <div>
+                <label for="tasa">
+                  Tasa de cambio COP / USD
+                </label>
+                <input type="number" id="tasa" step="1" min="0" placeholder="Ejemplo: 4200" />
+                <div class="descripcion-label">
+                  Valor del dólar usado en el cálculo (TRM aproximada).
+                </div>
+              </div>
+              <div>
+                <label for="precio">
+                  Precio base del bono (USD / tCO₂)
+                </label>
+                <input type="number" id="precio" step="0.01" min="0" value="5" />
+                <div class="descripcion-label">
+                  Para este proyecto se toma como referencia 5 USD por tonelada de CO₂.
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="opcion">
+                Tipo de bono / intensidad de intervención
+              </label>
+              <select id="opcion">
+                <option value="1">Opción 1 – Guardabosques (protección básica)</option>
+                <option value="2">Opción 2 – Protección + cuidado de coberturas</option>
+                <option value="3">Opción 3 – Protección + cuidado + siembra de árboles</option>
+              </select>
+              <div class="descripcion-label">
+                La opción elegida ajusta el precio final del bono según las actividades ambientales.
+              </div>
+            </div>
+
+            <button type="button" onclick="calcular()">Calcular inversión en COP</button>
+
+            <div id="mensaje-error" class="error" style="display:none;"></div>
+
+            <div class="resultado" id="resultado" style="display:none;">
+              <div class="resultado-titulo">Resultado de la simulación</div>
+              <div class="resultado-monto" id="resultado-monto"></div>
+              <div class="resultado-detalle" id="resultado-detalle"></div>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <div>
+            <span class="footer-enfasis">Nota:</span>
+            la herramienta usa supuestos simplificados para fines académicos de Ingeniería Económica.
+          </div>
+          <div>
+            No reemplaza estudios técnicos, inventarios de carbono ni cotizaciones de proyectos reales.
+          </div>
+        </footer>
+      </div>
+    </div>
+  </main>
 
   <script>
-    function calcular() {
-      const E = parseFloat(document.getElementById('emisiones').value);
-      const T = parseFloat(document.getElementById('tasa').value);
-      const P = parseFloat(document.getElementById('precio').value);
-      const O = parseInt(document.getElementById('opcion').value, 10);
+    function formatoNumeroCOP(valor) {
+      return valor.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "COP",
+        maximumFractionDigits: 0
+      });
+    }
 
-      if (isNaN(E) || isNaN(T) || isNaN(P)) {
-        document.getElementById('resultado').innerText =
-          'Por favor completa todos los campos numéricos.';
+    function formatoNumeroUSD(valor) {
+      return valor.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function calcular() {
+      const emisionesInput = document.getElementById("emisiones");
+      const tasaInput = document.getElementById("tasa");
+      const precioInput = document.getElementById("precio");
+      const opcionSelect = document.getElementById("opcion");
+
+      const E = parseFloat(emisionesInput.value);
+      const T = parseFloat(tasaInput.value);
+      const P = parseFloat(precioInput.value);
+      const O = parseInt(opcionSelect.value, 10);
+
+      const errorDiv = document.getElementById("mensaje-error");
+      const resultadoDiv = document.getElementById("resultado");
+      const resultadoMonto = document.getElementById("resultado-monto");
+      const resultadoDetalle = document.getElementById("resultado-detalle");
+
+      errorDiv.style.display = "none";
+      resultadoDiv.style.display = "none";
+      errorDiv.textContent = "";
+      resultadoMonto.textContent = "";
+      resultadoDetalle.textContent = "";
+
+      if (isNaN(E) || isNaN(T) || isNaN(P) || E <= 0 || T <= 0 || P <= 0) {
+        errorDiv.textContent =
+          "Por favor ingresa valores numéricos válidos y mayores que cero en todos los campos.";
+        errorDiv.style.display = "block";
         return;
       }
 
       let M = 1.0;
-      if (O === 2) M = 1.2;
-      if (O === 3) M = 1.5;
+      let descripcionOpcion = "";
 
-      const precioFinalBono = P * M;
+      if (O === 1) {
+        M = 1.0;
+        descripcionOpcion = "Opción 1 – Guardabosques (protección básica).";
+      } else if (O === 2) {
+        M = 1.2;
+        descripcionOpcion =
+          "Opción 2 – Protección con guardabosques + jornadas de cuidado de coberturas vegetales.";
+      } else if (O === 3) {
+        M = 1.5;
+        descripcionOpcion =
+          "Opción 3 – Protección, cuidado de coberturas y jornadas de siembra de árboles nativos.";
+      }
+
+      const precioFinalBono = P * M;       // USD / tCO2
       const costoUSD = E * precioFinalBono;
       const costoCOP = costoUSD * T;
 
-      document.getElementById('resultado').innerText =
-        'La inversión necesaria es: ' +
-        costoCOP.toLocaleString('es-CO', {
-          style: 'currency',
-          currency: 'COP'
-        });
+      resultadoDiv.style.display = "block";
+      resultadoMonto.textContent = formatoNumeroCOP(costoCOP);
+
+      const detalleHTML = `
+        Para compensar <strong>${E.toLocaleString("es-CO", {maximumFractionDigits: 2})} toneladas de CO₂</strong>,
+        con un precio base de <strong>${formatoNumeroUSD(P)} por tCO₂</strong> y la
+        ${descripcionOpcion}<br><br>
+        • Precio final del bono: <strong>${formatoNumeroUSD(precioFinalBono)} por tCO₂</strong>.<br>
+        • Costo total en dólares: <strong>${formatoNumeroUSD(costoUSD)}</strong>.<br>
+        • Tasa de cambio usada: <strong>${T.toLocaleString("es-CO")} COP / USD</strong>.<br><br>
+        La inversión inicial estimada que debería realizar la empresa para compensar sus emisiones de
+        un año es de <strong>${formatoNumeroCOP(costoCOP)}</strong>.
+      `;
+
+      resultadoDetalle.innerHTML = detalleHTML;
     }
   </script>
 </body>
