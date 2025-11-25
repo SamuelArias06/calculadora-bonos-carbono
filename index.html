@@ -832,24 +832,28 @@
     async function obtenerTRM() {
       const tasaInput = document.getElementById("tasa");
       const trmInfo = document.getElementById("trm-info");
-
+    
       trmInfo.textContent = "Consultando TRM actual aproximada...";
-
+    
       try {
-        const respuesta = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=COP");
+        // Nueva API: open.er-api.com (sin API key, CORS habilitado)
+        const respuesta = await fetch("https://open.er-api.com/v6/latest/USD");
+    
         if (!respuesta.ok) {
           throw new Error("No se pudo obtener la TRM");
         }
+    
         const datos = await respuesta.json();
+        // La estructura de la respuesta es: { result: "success", base_code: "USD", rates: { COP: 3xxx.xx, ... } }
         const tasa = datos && datos.rates && datos.rates.COP ? datos.rates.COP : null;
-
+    
         if (!tasa) {
           throw new Error("Respuesta inválida de la API");
         }
-
+    
         const tasaRedondeada = Math.round(tasa);
         tasaInput.value = tasaRedondeada;
-
+    
         trmInfo.innerHTML =
           `TRM aproximada obtenida en línea: <strong>${tasaRedondeada.toLocaleString("es-CO")} COP / USD</strong>. ` +
           `Puedes ajustarla manualmente si lo consideras necesario.`;
@@ -859,6 +863,7 @@
           "No fue posible obtener la TRM actual automáticamente. Ingresa la tasa manualmente.";
       }
     }
+
 
     function calcular() {
       const emisionesInput = document.getElementById("emisiones");
