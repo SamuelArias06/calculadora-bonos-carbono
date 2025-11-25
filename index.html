@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calculadora de Bonos de Carbono</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    label { display: block; margin-top: 10px; }
+    input, select {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .resultado {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora de inversión en bonos de carbono</h1>
+
+  <label>
+    Emisiones anuales (toneladas de CO₂)
+    <input type="number" id="emisiones" step="0.01" />
+  </label>
+
+  <label>
+    Tasa de cambio COP / USD
+    <input type="number" id="tasa" step="0.01" />
+  </label>
+
+  <label>
+    Precio base del bono (USD por tonelada de CO₂)
+    <input type="number" id="precio" step="0.01" value="5" />
+  </label>
+
+  <label>
+    Tipo de bono
+    <select id="opcion">
+      <option value="1">Opción 1 – Guardabosques</option>
+      <option value="2">Opción 2 – Guardabosques + cuidado de cobertura</option>
+      <option value="3">Opción 3 – Guardabosques + cuidado + siembra</option>
+    </select>
+  </label>
+
+  <button onclick="calcular()">Calcular inversión</button>
+
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    function calcular() {
+      const E = parseFloat(document.getElementById('emisiones').value);
+      const T = parseFloat(document.getElementById('tasa').value);
+      const P = parseFloat(document.getElementById('precio').value);
+      const O = parseInt(document.getElementById('opcion').value, 10);
+
+      if (isNaN(E) || isNaN(T) || isNaN(P)) {
+        document.getElementById('resultado').innerText =
+          'Por favor completa todos los campos numéricos.';
+        return;
+      }
+
+      let M = 1.0;
+      if (O === 2) M = 1.2;
+      if (O === 3) M = 1.5;
+
+      const precioFinalBono = P * M;
+      const costoUSD = E * precioFinalBono;
+      const costoCOP = costoUSD * T;
+
+      document.getElementById('resultado').innerText =
+        'La inversión necesaria es: ' +
+        costoCOP.toLocaleString('es-CO', {
+          style: 'currency',
+          currency: 'COP'
+        });
+    }
+  </script>
+</body>
+</html>
