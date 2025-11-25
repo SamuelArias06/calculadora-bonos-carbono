@@ -535,10 +535,10 @@
         </div>
       </div>
 
-      <!-- Banner para imagen generada con Sora -->
+      <!-- Banner con la imagen generada -->
       <div class="hero-banner">
-        <!-- Cambia el src por la imagen que generes con Sora -->
-        <img src="20251124_2314_Bosque Amazónico Tranquilo_simple_compose_01kawkdbqzf7yrn91gs50b3ct2.png" alt="Bosque tropical andino-amazónico con niebla y tonos verdes profundos" />
+        <img src="20251124_2314_Bosque Amazónico Tranquilo_simple_compose_01kawkdbqzf7yrn91gs50b3ct2.png"
+             alt="Bosque amazónico tranquilo con tonos verdes profundos y niebla suave" />
       </div>
     </div>
   </header>
@@ -710,9 +710,12 @@
                   Tasa de cambio COP / USD
                 </label>
                 <input type="number" id="tasa" step="1" min="0" placeholder="Ejemplo: 4200" />
-                <div class="descripcion-label">
+                <div class="descripcion-label" id="trm-info">
                   Valor del dólar usado en el cálculo (TRM aproximada).
                 </div>
+                <button type="button" class="btn-secundario" style="margin-top:6px;" onclick="obtenerTRM()">
+                  Usar TRM actual (aprox.)
+                </button>
               </div>
               <div>
                 <label for="precio">
@@ -779,6 +782,9 @@
           <div>
             No reemplaza estudios técnicos, inventarios de carbono ni cotizaciones de proyectos reales.
           </div>
+          <div>
+            Desarrollado por: Juan Manuel Becerra Ayala y Mariana Catalina Espinel Rocha – Universidad Santo Tomás, Tunja.
+          </div>
         </footer>
       </div>
     </div>
@@ -821,6 +827,37 @@
           "Opción 3 – Protección, cuidado de coberturas y jornadas de siembra de árboles nativos.";
       }
       return { M, descripcion };
+    }
+
+    async function obtenerTRM() {
+      const tasaInput = document.getElementById("tasa");
+      const trmInfo = document.getElementById("trm-info");
+
+      trmInfo.textContent = "Consultando TRM actual aproximada...";
+
+      try {
+        const respuesta = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=COP");
+        if (!respuesta.ok) {
+          throw new Error("No se pudo obtener la TRM");
+        }
+        const datos = await respuesta.json();
+        const tasa = datos && datos.rates && datos.rates.COP ? datos.rates.COP : null;
+
+        if (!tasa) {
+          throw new Error("Respuesta inválida de la API");
+        }
+
+        const tasaRedondeada = Math.round(tasa);
+        tasaInput.value = tasaRedondeada;
+
+        trmInfo.innerHTML =
+          `TRM aproximada obtenida en línea: <strong>${tasaRedondeada.toLocaleString("es-CO")} COP / USD</strong>. ` +
+          `Puedes ajustarla manualmente si lo consideras necesario.`;
+      } catch (error) {
+        console.error(error);
+        trmInfo.textContent =
+          "No fue posible obtener la TRM actual automáticamente. Ingresa la tasa manualmente.";
+      }
     }
 
     function calcular() {
